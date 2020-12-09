@@ -22,6 +22,11 @@ To download the code, please run the script below. If the installation fails, pl
 ./install_peakFinder.sh
 ```
 
+The input IQ samples can either be generated using SDR or be downloaded from the dataset in [2]. To download and configure a sample dataset, please run the script below. The script creates the directories *misc/data* and stores the sample dataset *file_test_source*.
+
+```Bash
+./conf_dataset.sh
+```
 
 **Software Requirements**: *For the correct execution of the code, ensure you are running it on version R2019a or later.*
 
@@ -53,7 +58,7 @@ The script *main_RX_RFID* accepts multiple inputs, all of them are optional. Bel
 % Loads the IQ samples from a specific location and activates the LOGS. 
 % The code prints the decoded EPC as well as some metrics of BER and EVM 
 % (useful when the EPC is known a priori)
-main_RX_RFID('fileName', 'misc/data/file_source_test_0', 'LOGS', true)
+main_RX_RFID('fileName', 'misc/data/file_source_test', 'LOGS', true)
 ```
 
 Carrier Frequency Offset (CFO) and other impairments hinder the decoding of information comings from RFID tags. In particular, the CFO generates a symbol rotation as shown in the pictures below. The code can also generate spurious sinewave signals. For more information, see the docs of the main function. For instance, the following inputs generate a CFO of 350Hz to the input samples:
@@ -73,21 +78,23 @@ Some examples of decoded symbols under suffering CFO are shown below.
 A sample of the execution output is shown below, which maps to the sample dataset in [2] with no other impairment added. The left-most integer denotes the slot index within the execution. For each slot, the code prints the following information- The first value is the RN16 value that was decoded in the second stage of the inventory round. The second value is the channel estimation (gain and phase). Then, a short and a complete EPC decoded is shown for that particular slot. Note that the decoder only accepts those EPC's who has passed the CRC check. Lastly, a BER measurement is included. This last feature is only relevant when only one tag is in range and its EPC is known a priori.
 
 ```Source
-74 -> 1  0  0  0  1  0  1  0  0  0  0  1  0  0  0  0
-74 -> H_est: 0.068 (1.088)
-74 -> 70DA
-74 -> 6000 0210 A392 70DA
-74 -> BER of 0.0000
-75 -> 1  0  0  1  1  1  0  0  1  1  0  1  0  1  1  0
-75 -> H_est: 0.081 (0.983)
-75 -> 70DA
-75 -> 6000 0210 A392 70DA
-75 -> BER of 0.0000
-76 -> 1  1  1  1  0  0  1  0  1  0  1  0  0  0  0  1
-76 -> H_est: 0.070 (0.944)
-76 -> 70DA
-76 -> 6000 0210 A392 70DA
-76 -> BER of 0.0000
+ SLOT  ||                  MESSAGE 
+       ...
+    65 || RN16: 1  1  0  0  0  1  0  1  1  0  1  1  0  1  0  1
+       || H_est: 0.180 (-0.194)
+       || EPC_hex (short): 27
+       || EPC_hex (full): DDD9 0140 0000 0027
+       || BER of 0.0000
+    66 || RN16: 1  0  1  1  1  0  0  1  0  1  0  0  1  1  0  0
+       || H_est: 0.186 (-0.063)
+       || EPC_hex (short): 27
+       || EPC_hex (full): DDD9 0140 0000 0027
+       || BER of 0.0000
+    67 || RN16: 0  1  1  0  1  1  0  1  0  1  1  1  1  0  0  0
+       || H_est: 0.198 (-0.135)
+       || EPC_hex (short): 27
+       || EPC_hex (full): DDD9 0140 0000 0027
+       || BER of 0.0000
 ```
 
 ## CFO Compensation

@@ -34,10 +34,12 @@ function [avBER, avPDR] = main_RX_Matlab(varargin)
 %    LOGS [optional] - Flag (True or False) to print the logs
 %    sf [optional] - Spurious additive signal (frequency in Hz).
 %    sa [optional] - Spurious additive signal (amplitude in linear scale).
+%    EPC_bits [optional] - Ground truth of the EPC bits expected to be
+%    decoded in the execution.
 %
 % Outputs:
-%    avBER - Average measured BER
-%    avPDR - Average measured PER
+%    avBER - Average measured Bit Error Rate (BER)
+%    avPDR - Average measured Packet Delivery Ratio (PDR)
 %
 %
 %------------- BEGIN CODE --------------
@@ -46,18 +48,29 @@ persistent p;
 if isempty(p)
     p = inputParser;
     p.FunctionName = 'main_RX_Matlab';
-    addParameter(p,'fileName','misc/data/file_source_test_0', ...
-        @(x)validateattributes(x,{'char'},{'nonempty'}))
+    addParameter(p,'fileName','misc/data/file_source_test', ...
+        @(x)validateattributes(x,{'char'},{'nonempty'}));
     addParameter(p,'fo',0, ...
-        @(x)validateattributes(x,{'numeric'},{'nonempty'}))
+        @(x)validateattributes(x,{'numeric'},{'nonempty'}));
     addParameter(p,'PLOT',false, ...
-        @(x)validateattributes(x,{'logical'},{'nonempty'}))
+        @(x)validateattributes(x,{'logical'},{'nonempty'}));
     addParameter(p,'LOGS',false, ...
-        @(x)validateattributes(x,{'logical'},{'nonempty'}))
+        @(x)validateattributes(x,{'logical'},{'nonempty'}));
     addParameter(p,'sf',2.2e3, ...
-        @(x)validateattributes(x,{'numeric'},{'nonempty'}))
+        @(x)validateattributes(x,{'numeric'},{'nonempty'}));
     addParameter(p,'sa',0.6 * 0.0 / 25, ...
-        @(x)validateattributes(x,{'numeric'},{'nonempty'}))
+        @(x)validateattributes(x,{'numeric'},{'nonempty'}));
+    addParameter(p,'EPC_bits', ...
+        [0  0  1  1  0  0  0  0  0  0  0  0  0  0  ...
+         0  0  0  0  1  1  0  0  0  0  0  0  0  0  ...
+         1  0  0  0  0  0  1  1  0  0  1  1  1  0  ...
+         1  1  0  0  1  0  1  1  0  1  1  1  0  1  ...
+         1  1  0  1  1  0  0  1  0  0  0  0  0  0  ...
+         0  1  0  1  0  0  0  0  0  0  0  0  0  0  ...
+         0  0  0  0  0  0  0  0  0  0  0  0  0  0  ...
+         0  0  0  0  0  0  0  0  1  0  0  1  1  1  ...
+         0  1  1  0  1  1  0  1  0  0  1  1  1  1  1  0], ...
+        @(x)validateattributes(x,{'numeric'},{'nonempty'}));
 end
 
 parse(p,varargin{:})
@@ -68,6 +81,7 @@ PLOT = p.Results.PLOT;
 LOGS = p.Results.LOGS;
 fo = p.Results.fo;
 sf = p.Results.sf;
+EPC_bits_ground_truth = p.Results.EPC_bits;
 
 %% CONFIGURE PATH
 addpath('utils/');
@@ -79,21 +93,6 @@ addpath('utils/');
 fid = fopen(fileName, 'r');
 data = fread(fid,inf,'single'); 
 raw_IQ = (data(1:2:end) + 1i.*data(2:2:end)).';
-% EPC_bits_ground_truth = [0  0  1  1  0  0  0  0  0  0  0  0  0  0  ...
-%                          0  0  0  0  1  1  0  0  0  0  0  0  0  0  ...
-%                          1  0  0  0  0  0  1  1  0  0  1  1  1  0  ...
-%                          1  1  0  0  1  0  1  1  0  1  1  1  0  1  ...
-%                          1  1  0  1  1  0  0  1  0  0  0  0  0  0  ...
-%                          0  1  0  1  0  0  0  0  0  0  0  0  0  0  ...
-%                          0  0  0  0  0  0  0  0  0  0  0  0  0  0  ...
-%                          0  0  0  0  0  0  0  0  1  0  0  1  1  1  ...
-%                          0  1  1  0  1  1  0  1  0  0  1  1  1  1  1  0];
-EPC_bits_ground_truth = [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,1,...
-                         0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,...
-                         0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,...
-                         0,1,0,0,0,0,1,0,0,0,0,1,0,1,0,0,0,1,1,1,0,0,1,...
-                         0,0,1,0,0,1,1,1,0,0,0,0,1,1,0,1,1,0,1,0,1,0,0,...
-                         1,1,1,1,1,0,1,1,0,0,1,0,1];
 
 %% CFO
 CFO = fo/adc_rate;
@@ -118,6 +117,7 @@ DES_index_max = length(output_MF);  % DES cannot go over this index
 num_decoded = 0;
 avBER = 0;
 avPDR = 1;
+fprintf(' SLOT  ||                  MESSAGE \n');
 while(DES_index_max >= DES_index + 2*max(oTD.to_copy))
     %% GATE 
     % Pre-process samples for GATE
@@ -142,7 +142,8 @@ while(DES_index_max >= DES_index + 2*max(oTD.to_copy))
         
         if oTD.state == oTD.SEEK_EPC
             if LOGS
-                fprintf('%d -> %s\n',num_decoded,num2str(RN16_bits));
+%                 fprintf('%d -> %s\n',num_decoded,num2str(RN16_bits));
+                fprintf('%6d || RN16: %s\n',num_decoded,num2str(RN16_bits));
             end
         else
             BER = f_compute_BER(EPC_bits, EPC_bits_ground_truth);
@@ -152,11 +153,11 @@ while(DES_index_max >= DES_index + 2*max(oTD.to_copy))
             avPDR = (num_decoded/(num_decoded+1))*avPDR + ...
                     1/(num_decoded+1)*PDR;
             if LOGS
-                fprintf('%d -> H_est: %.3f (%.3f)\n',num_decoded,abs(h_est),angle(h_est));
-                fprintf('%d -> %s\n',num_decoded,num2str(EPC_hex));
-                fprintf('%d -> %s\n',num_decoded,EPC_long_hex);
-                fprintf('%d -> BER of %.4f\n',num_decoded,BER);
-                fprintf('%d -> EV: %s\n',num_decoded,num2str(abs(EPC_bits - EPC_bits_ground_truth)));
+                fprintf('%6d || H_est: %.3f (%.3f)\n','',abs(h_est),angle(h_est));
+                fprintf('%6d || EPC_hex (short): %s\n','',num2str(EPC_hex));
+                fprintf('%6d || EPC_hex (full): %s\n','',EPC_long_hex);
+                fprintf('%6d || BER of %.4f\n','',BER);
+                fprintf('%6d || EV: %s\n','',num2str(abs(EPC_bits - EPC_bits_ground_truth)));
             end
             num_decoded = num_decoded + 1;
         end
@@ -169,8 +170,10 @@ while(DES_index_max >= DES_index + 2*max(oTD.to_copy))
 end
 
 %% PRINT RESULTS
+fprintf ('--------------------\n');
+fprintf ('BER: %.4f  PDR: %.4f\n', avBER, avPDR);
 % fprintf ('%.4f -> BER: %.4f  PDR: %.4f\n', sa, avBER, avPDR);
-fprintf ('%.4f %.4f\n', sa, avPDR);
+% fprintf ('%.4f %.4f\n', sa, avPDR);
 
 
 
