@@ -26,8 +26,8 @@ init = 10e4;
 % v = read_complex_binary('/home/carlos/git/DATA/data_new/B210_internal_no-sync_2Mbps_925Mhz_wireless.dat',N+init).';
 % v = read_complex_binary ('/home/carlos/git/DATA/data_new/B210_octo_2Mbps_925Mhz_wired.dat',N+init).';
 % v = read_complex_binary ('/home/carlos/git/DATA/data_new/B210_octo_2Mbps_925Mhz_wireless.dat',N+init).';
-v = read_complex_binary ('/home/carlos/git/DATA/data_new/B210_rfclk_2Mbps_925Mhz_wired_1.dat',N+init).';
-% v = read_complex_binary ('/home/carlos/git/DATA/data_new/B210_rfclk_2Mbps_925Mhz_wireless.dat',N+init).';
+% v = read_complex_binary ('/home/carlos/git/DATA/data_new/B210_rfclk_2Mbps_925Mhz_wired_1.dat',N+init).';
+v = read_complex_binary ('/home/carlos/git/DATA/data_new/B210_rfclk_2Mbps_925Mhz_wireless.dat',N+init).';
 % v = read_complex_binary ('/home/carlos/git/DATA/data_new/B210_rfclk_noAmp_2Mbps_900Mhz_wireless_interference.dat',N+init).';
 
 % FFT_rfclk

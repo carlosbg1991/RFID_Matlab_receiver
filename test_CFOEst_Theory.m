@@ -1,25 +1,35 @@
  function [CFO_error] = test_CFOEst_Theory(varargin)
-
-%% Check correct number of input arguments. If none, then set-up default
-% parameters from configuration functions
-if (nargin==4)
-    if ~ (isnumeric(varargin{1}) && isnumeric(varargin{2}) && ...
-            isnumeric(varargin{3}) && isnumeric(varargin{4}))
-        error('ERROR: Input parameters should be numeric\n');
-    end
-    
-    N = varargin{1};
-    SNR = varargin{2};
-    fo = varargin{3};
-    po = varargin{4};
-elseif (nargin==0)
-    clear; close all;
-    % Pre-configured initial values
-    N = 1e5;  % number of samples in the CW
-    SNR = 30;  % desired SNR in dB
-    fo = 102;  % selected freq offset in Hz
-    po = 2*pi*rand(1);  % phase offset
-end
+% test_CFOEst_Theory - This script estimates the CFO from a syntheticaly
+% generated inputted signal using Sinewave fitting and modeling. The script
+% generates a constant waveform and then adds the CFO to it.
+%
+% Syntax:  test_CFOEst_Gen2('fileName', 'misc/data/file_source_test_0')
+%          test_CFOEst_Gen2('initFit', 4734, 'endFit', 5500)
+%
+% Inputs:
+%    N [optional] - Numbe of samples
+%    SNR [optional] - SNR in dB of the received signal
+%    fo [optional] - Frequency offset in Hz. This generates a CFO in the
+%    input signal of fo Hz.
+%    po [optional] - Phase offset in Hz.
+%
+% Outputs: 
+%    CFO_error - Error in Hz of the CFO estimation
+%
+%
+%------------- BEGIN CODE --------------
+%% PARSE INPUTS
+p = inputParser;
+p.FunctionName = 'test_CFOEst_Theory';
+addParameter(p,'N',   1e5, @(x)validateattributes(x,{'numeric'},{'nonempty'}))
+addParameter(p,'SNR', 30, @(x)validateattributes(x,{'numeric'},{'nonempty'}))
+addParameter(p,'fo',  150, @(x)validateattributes(x,{'numeric'},{'nonempty'}))
+addParameter(p,'po',  2*pi*rand(1), @(x)validateattributes(x,{'numeric'},{'nonempty'}))
+parse(p,varargin{:})
+N = p.Results.N;
+SNR = p.Results.SNR;
+fo = p.Results.fo;
+po = p.Results.po;
 
 addpath('utils/');  % include utils functions
 
@@ -84,34 +94,34 @@ s_CFO_corr = offset_Re + (ampl_Re/n_taps) .* sin(2*pi*(0:N-1)*CFO_est_Re + phase
 CFO_error = min(abs(fo_est_Re-fo),abs(fo_est_Im-fo));
          
 %% Compare CFO sequences
-% figure;
+figure;
+subplot(2,1,1); hold on;
+plot((1:numel(s_CFO))./adc_rate.*1e3,real(s_CFO),'linewidth',1.5);
+plot((1:numel(s_CFO))./adc_rate.*1e3,real(s_CFO_corr),'linewidth',1.5);
+ylabel('Real (amplitude)')
+xlabel('Time (ms)');
+legend('original CFO seq','estimated CFO seq');
+set(gca,'FontWeight','bold','fontSize',9);
+subplot(2,1,2); hold on;
+plot((1:numel(s_CFO))./adc_rate.*1e3,imag(s_CFO),'linewidth',1.5);
+plot((1:numel(s_CFO))./adc_rate.*1e3,imag(s_CFO_corr),'linewidth',1.5);
+ylabel('Imaginary (amplitude)')
+xlabel('Time (ms)');
+legend('original CFO seq','estimated CFO seq');
+set(gca,'FontWeight','bold','fontSize',9);
+
+y_corr = y_CFO.*conj(s_CFO_corr);
+
+figure; hold on;
 % subplot(2,1,1); hold on;
-% plot((1:numel(s_CFO))./adc_rate.*1e3,real(s_CFO),'linewidth',1.5);
-% plot((1:numel(s_CFO))./adc_rate.*1e3,real(s_CFO_corr),'linewidth',1.5);
-% ylabel('Real (amplitude)')
-% xlabel('Time (ms)');
-% legend('original CFO seq','estimated CFO seq');
-% set(gca,'FontWeight','bold','fontSize',9);
-% subplot(2,1,2); hold on;
-% plot((1:numel(s_CFO))./adc_rate.*1e3,imag(s_CFO),'linewidth',1.5);
-% plot((1:numel(s_CFO))./adc_rate.*1e3,imag(s_CFO_corr),'linewidth',1.5);
-% ylabel('Imaginary (amplitude)')
-% xlabel('Time (ms)');
-% legend('original CFO seq','estimated CFO seq');
-% set(gca,'FontWeight','bold','fontSize',9);
-% 
-% y_corr = y_CFO.*conj(s_CFO_corr);
-% 
-% figure;
-% subplot(2,1,1); hold on;
-% plot((1:numel(y_CFO))./adc_rate.*1e3,real(y_CFO),'linewidth',1.5);
-% plot((1:numel(y_CFO))./adc_rate.*1e3,real(y_corr),'linewidth',1.5);
-% plot((1:numel(y_CFO))./adc_rate.*1e3,real(s_CFO_corr),'linewidth',1.5);
-% ylabel('Real (ampl)')
-% xlabel('Time (ms)');
-% legend('with CFO','corrected CFO','correction seq');
-% title(strcat('N=',num2str(N),{' '},', Fs=',num2str(adc_rate),{' '},' error=',num2str(abs(fo-fo_est_Re)),'Hz'));
-% set(gca,'FontWeight','bold','fontSize',9);
+plot((1:numel(y_CFO))./adc_rate.*1e3,real(y_CFO),'linewidth',1.5);
+plot((1:numel(y_CFO))./adc_rate.*1e3,real(y_corr),'linewidth',1.5);
+plot((1:numel(y_CFO))./adc_rate.*1e3,real(s_CFO_corr),'linewidth',1.5);
+ylabel('Real (ampl)')
+xlabel('Time (ms)');
+legend('with CFO','corrected CFO','correction seq');
+title(strcat('N=',num2str(N),{' '},', Fs=',num2str(adc_rate),{' '},' error=',num2str(abs(fo-fo_est_Re)),'Hz'));
+set(gca,'FontWeight','bold','fontSize',9);
 % subplot(2,1,2); hold on;
 % plot((1:numel(y_CFO))./adc_rate.*1e3,imag(y_CFO),'linewidth',1.5);
 % plot((1:numel(y_CFO))./adc_rate.*1e3,imag(y_corr),'linewidth',1.5);
@@ -120,4 +130,4 @@ CFO_error = min(abs(fo_est_Re-fo),abs(fo_est_Im-fo));
 % xlabel('Time (ms)');
 % legend('with CFO','corrected CFO','correction seq');
 % title(strcat('N=',num2str(N),{' '},', Fs=',num2str(adc_rate),{' '},' error=',num2str(abs(fo-fo_est_Im)),'Hz'));
-% set(gca,'FontWeight','bold','fontSize',9);
+set(gca,'FontWeight','bold','fontSize',9);

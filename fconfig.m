@@ -1,5 +1,14 @@
-function [adc_rate, fs, oMF, oG, oTD] = fconfig
+function [adc_rate, fs, oMF, oG, oTD] = fconfig(varargin)
 
+%% PARSE INPUTS
+p = inputParser;
+validPlot = @(x) islogical(x);
+defaultPlot = false;
+addOptional(p,'PLOT',defaultPlot,validPlot);
+parse(p,varargin{:});
+PLOT = p.Results.PLOT;
+
+%% GLOBAL CONFIG
 adc_rate = 2e6;  % sampling rate at the RFIC of the SDR
 
 %% MATCHED FILTER (MF)
@@ -37,6 +46,8 @@ oTD.to_copy(1) = (oTD.RN16_BITS + oTD.TAG_PREAMBLE_BITS)*oTD.n_samples_TAG_BIT +
                    2*oTD.n_samples_TAG_BIT;  % for RN16
 oTD.to_copy(2) = (oTD.EPC_BITS + oTD.TAG_PREAMBLE_BITS)*oTD.n_samples_TAG_BIT + ...
                   2*oTD.n_samples_TAG_BIT + oTD.n_samples_TAG_BIT;  % for EPC
+
+oTD.PLOT = PLOT;
 
               
               

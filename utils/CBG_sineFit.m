@@ -140,7 +140,7 @@ if SineParams(4)<0
 end
 
 %Plot, uncomment following line or delete all following lines:
-PlotResults(x,y,SineParams,paramsFFT,fs,P1,maxFFTindx,maxFFT,MSE);
+% PlotResults(x,y,SineParams,paramsFFT,fs,P1,maxFFTindx,maxFFT,MSE);
 
 %% Plot results (optional, uncomment statement above)
 function PlotResults(x,y,SineParams,paramsFFT,fs,P1,maxFFTindx,maxFFT,MSE)

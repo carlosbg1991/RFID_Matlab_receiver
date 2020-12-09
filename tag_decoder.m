@@ -45,10 +45,12 @@ switch oTD.state
             RN16_samples_complex = [RN16_samples_complex in(k)];  %#ok<AGROW>
 
             if (number_of_half_bits == 2*(oTD.RN16_BITS-1))
-%                 scatterplot(RN16_samples_complex);
-%                 figure(3); plot(real(RN16_samples_complex),imag(RN16_samples_complex),'lineStyle','none','marker','*');
-%                 xlim([-2 2]); ylim([-2 2]); 
-                 tag_bits = tag_detection_RN16(RN16_samples_complex,h_est,oTD);
+                tag_bits = tag_detection_RN16(RN16_samples_complex,h_est,oTD);
+                if oTD.PLOT
+                    figure(3); plot(real(RN16_samples_complex),imag(RN16_samples_complex),'lineStyle','none','marker','*');
+                    xlim([-2 2]); ylim([-2 2]); 
+                    hold off;
+                end
                 break;
             end
         end
@@ -206,11 +208,13 @@ function tag_epc_bits = tag_detection_EPC(in, index, h_est, oTD)
             end
         end
     end
-%     figure(3);
-%     plot(real(temp),imag(temp),'lineStyle','none','marker','*');
-%     hold on;
-%     plot(real(temp.*conj(h_est)),imag(temp.*conj(h_est)),'lineStyle','none','marker','*');
-%     hold off; 
+    if oTD.PLOT
+        figure(4);
+        plot(real(temp),imag(temp),'lineStyle','none','marker','*');
+        hold on;
+        plot(real(temp.*conj(h_est)),imag(temp.*conj(h_est)),'lineStyle','none','marker','*');
+        hold off;
+    end
 end
 
 function status = check_crc(bits, num_bits)

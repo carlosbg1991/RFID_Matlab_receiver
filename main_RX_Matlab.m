@@ -1,6 +1,46 @@
 function [avBER, avPDR] = main_RX_Matlab(varargin)
-% GOAL: EMULATE THE RX GNURADIO CODE IN MATLAB
-
+% main_RX_Matlab - This script emulates a RFID Receiver. It takes the raw
+% input samples and decodes them to ultimately print the unique identifier
+% by terminal. 
+%
+% This code extends from the following GNURadio code:
+% https://github.com/nkargas/Gen2-UHF-RFID-Reader
+% To generate new traces, just run the reader and store them in a binary
+% file. Then, call this script with those recorded samples. Note that this
+% is a passive receiver, so it does not interact with the tags, it merely
+% reads whatever it has been transmitted by the reader and tags.
+%
+% The also outputs BER and EVM measurements based on prior knowledge of the
+% tag in range. For instance, one could run the RFID GNURadio reader with
+% only one tag in range and store its EPC (in bits) under the variable
+% EPC_bits_ground_truth.
+%
+% In addition, this code allows to set the frequency offset as though
+% the transmitter and receiver antennas were missing frequency 
+% synchronization.
+%
+% Syntax:  main_RX_Matlab('fileName','misc/data/file_source_test_0')
+%          main_RX_Matlab('fo',250)  % frequency offset in Hz
+%          main_RX_Matlab('PLOT',250)  % plot IQ samples
+%          main_RX_Matlab('LOGS',true)  % activate decoding LOGS
+%
+% Inputs:
+%    fileName [optional] - string containing the location of the input IQ
+%    samples from the RFID reader.
+%    fo [optional] - Frequency offset in Hz.
+%    PLOT [optional] - Flag (True or False) to plot the intermediate steps
+%    in the decoder. This flag is intended for debugging purposes as it
+%    plots the detected frames and also the decoded symbols in each slot.
+%    LOGS [optional] - Flag (True or False) to print the logs
+%    sf [optional] - Spurious additive signal (frequency in Hz).
+%    sa [optional] - Spurious additive signal (amplitude in linear scale).
+%
+% Outputs:
+%    avBER - Average measured BER
+%    avPDR - Average measured PER
+%
+%
+%------------- BEGIN CODE --------------
 persistent p;
 
 if isempty(p)
@@ -29,8 +69,11 @@ LOGS = p.Results.LOGS;
 fo = p.Results.fo;
 sf = p.Results.sf;
 
+%% CONFIGURE PATH
+addpath('utils/');
+
 %% RX PARAMETERS
-[adc_rate, fs, oMF, oG, oTD] = fconfig;
+[adc_rate, fs, oMF, oG, oTD] = fconfig(PLOT);
 
 %% Input test sequence
 fid = fopen(fileName, 'r');
@@ -66,60 +109,11 @@ raw_IQ_CFO = raw_IQ_CFO + s_SAS;
 my_filter = ones(1,oMF.n_taps);
 output_pulse = conv(my_filter,raw_IQ_CFO);
 output_MF = decimate(output_pulse,oMF.decim);
-N = numel(output_MF);
 
-% %% Retrieve the portion that we wish to use to estimate the CFO
-% my_init = 4300;
-% my_end = 6098;
-% range_CW = (my_init:my_end);
-% input_CFOEst = output_MF(range_CW);
-% 
-% %% Estimate the CFO
-% x = (1:numel(range_CW))./fs;
-% % REAL
-% y = real(input_CFOEst);
-% sineParams = CBG_sineFit(x,y);
-% offset_Re = sineParams(1);
-% ampl_Re = sineParams(2);
-% fo_est_Re = sineParams(3);
-% phase_Re = sineParams(4);
-% % IMAG
-% y = imag(input_CFOEst);
-% sineParams = CBG_sineFit(x,y);
-% offset_Im = sineParams(1);
-% ampl_Im = sineParams(2);
-% fo_est_Im = sineParams(3);
-% phase_Im = sineParams(4);
-
-% %% Correct CFO
-% CFO_est_Re = fo_est_Re/fs;
-% CFO_est_Im = fo_est_Im/fs;
-% phase_delta = 2*pi*CFO_est_Re*(my_init-1);
-% s_CFO_corr = offset_Re + (ampl_Re/oMF.n_taps) .* sin(2*pi*(0:N-1)*CFO_est_Re + phase_delta) + ...
-%              offset_Im + (ampl_Im/oMF.n_taps) .* 1i.*sin(2*pi*(0:N-1)*CFO_est_Im + phase_delta);
-% 
-% %% Compare CFO sequences
-% s_CFO_decim = decimate([s_CFO zeros(1,oMF.n_taps)],oMF.decim);
-% figure;
-% subplot(2,1,1); hold on;
-% plot((1:numel(s_CFO_decim))./fs.*1e3,real(s_CFO_decim),'linewidth',1.5);
-% plot((1:numel(s_CFO_decim))./fs.*1e3,real(s_CFO_corr),'linewidth',1.5);
-% ylabel('Real (amplitude)')
-% xlabel('Time (ms)');
-% legend('original CFO seq','estimated CFO seq');
-% set(gca,'FontWeight','bold','fontSize',9);
-% subplot(2,1,2); hold on;
-% plot((1:numel(s_CFO_decim))./fs.*1e3,imag(s_CFO_decim),'linewidth',1.5);
-% plot((1:numel(s_CFO_decim))./fs.*1e3,imag(s_CFO_corr),'linewidth',1.5);
-% ylabel('Imaginary (amplitude)')
-% xlabel('Time (ms)');
-% legend('original CFO seq','estimated CFO seq');
-% set(gca,'FontWeight','bold','fontSize',9);        
-%          
-% output_MF = output_MF.*conj(s_CFO_corr);
+% output = f_CFOEst_alt(output_MF, oMF, fs, CFO);
 
 %% DISCRETE EVENT SIMULATOR
-DES_index = 1;  % place D ES index at the beginning of the file
+DES_index = 1;  % place DES index at the beginning of the file
 DES_index_max = length(output_MF);  % DES cannot go over this index
 num_decoded = 0;
 avBER = 0;
