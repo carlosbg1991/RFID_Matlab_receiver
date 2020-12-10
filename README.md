@@ -6,7 +6,7 @@ This project implements a MATLAB-based RFID passive receiver. The code extends f
 The project is structured as follows:
 
 1. **ROOT**: Contains the main sctipts and functions to execute the RFID receiver. The main script is *main_RX_RFID.m*.
-2. **misc**: The raw IQ samples that are taken as inputs for the Matlab receiver are stored in this location by default.
+2. **misc**: The raw IQ samples that are taken as inputs for the Matlab receiver are stored in this location by default. This folder is created and populated with the sample IQ data following the Installation steps.
 3. **utils**: Hosts multiple extra functions used throughout the execution.
 4. **Old**: Old version of the scripts.
 5. **figs**: Where results are stored.
@@ -22,7 +22,7 @@ To download the code, please run the script below. If the installation fails, pl
 ./install_peakFinder.sh
 ```
 
-The input IQ samples can either be generated using SDR or be downloaded from the dataset in [2]. To download and configure a sample dataset, please run the script below. The script creates the directories *misc/data* and stores the sample dataset *file_test_source*.
+The main input of the passive receiver are the IQ samples from the reader-tag interaction. One way to generate a pre-recording is to use SDR's and run the GNURadio reader application in [2]. The second way is to use pre-recorded IQ samples that the same authors provide in their repository. To download and configure the sample dataset, please run the script below. The script creates the directories *misc/data* and stores the sample dataset *file_test_source*.
 
 ```Bash
 ./conf_dataset.sh
@@ -46,13 +46,13 @@ A sample Reader-tag interaction is captured in the Figure below, where frames ar
 
 The main script is *main_RX_RFID*. It first loads the input raw IQ samples and the configuration of the decoder. The decoder follows the implementation in [2,3] and consists mainly of 3 blocks:
 
-1. **Match Filter**: It filters the signal using a constant pulse of 25 samples length and a decimation factor of 5. This averages the noise and increases the probability of decoding the tag's response.
-2. **Gate**: This block keeps track of the DC offset and assesses whether a tag response is present. Upon detecting a response, it forwards the sample to the tag decoder.
-3. **Tag decoder**: This block contians the core code of the decoder. First, it performs fine synchronization using the preamble. Second, it estimates the wireless channel and equalizes the symbol. Lastly, it decodes the bits and even assertains its truthfulness via CRC checking (in case of EPC, not RN16).
+1. **Match Filter**: It filters the signal using a rectangular pulse of 25 samples followed by a decimation stage with a factor of 5. This averages the noise and increases the probability of decoding the tag's response.
+2. **Gate**: The Gate block keeps track of the DC offset and assesses whether a tag response is present. If a tag's response is detected during the coarse synchronization stage, the Gate forwards the samples to the Tag decoder block.
+3. **Tag decoder**: The tag decoder block contians the core code of the decoder. First, it performs fine synchronization using the preamble of Gen2 signals. Second, it estimates the wireless channel and equalizes the symbol. Lastly, it decodes the bits and even assertains its truthfulness via CRC checking (in case of EPC, not RN16).
 
-Note that these blocks and the general execution if configured according to the GNURadio implementation in [2]. The goal is to use the GNURadio code to generate new traces that can be imported later on into the MATLAB-based receiver. In the event that new traces are generated with a different configuration, the changes should be updated in the configuration functio *fconfig*.
+Note that these blocks and the general execution are configured according to the GNURadio implementation in [2]. The goal is to use the GNURadio code to generate new traces that can be imported later on into the MATLAB-based receiver. In the event that new traces are generated with a different configuration, the changes should be updated in the configuration function *fconfig*.
 
-The script *main_RX_RFID* accepts multiple inputs, all of them are optional. Below are is an example where we indicate the location of the IQ samples, activate the LOGS and add no impairment:
+The script *main_RX_RFID* accepts multiple inputs, all of them are optional. Below is an example where the location of the IQ samples is explicitely passed as a parameter, as well as the activation of the LOGS:
 
 ```Matlab
 % Loads the IQ samples from a specific location and activates the LOGS. 
@@ -61,7 +61,7 @@ The script *main_RX_RFID* accepts multiple inputs, all of them are optional. Bel
 main_RX_RFID('fileName', 'misc/data/file_source_test', 'LOGS', true)
 ```
 
-Carrier Frequency Offset (CFO) and other impairments hinder the decoding of information comings from RFID tags. In particular, the CFO generates a symbol rotation as shown in the pictures below. The code can also generate spurious sinewave signals. For more information, see the docs of the main function. For instance, the following inputs generate a CFO of 350Hz to the input samples:
+Carrier Frequency Offset (CFO) and other impairments hinder the decoding of information comings from RFID tags. In particular, the CFO generates a symbol rotation as shown in the pictures below. The code can also emulate spurious sinewave signals that are commonly present in the UHF RFID band. For instance, coming from other unsynchronized RFID readers. For more information, see the docs of the main function. To emulate a CFO of 350Hz, one can run the code below:
 
 ```Matlab
 main_RX_RFID('fo', 350)  % Generates an offset of 350Hz
@@ -75,7 +75,7 @@ Some examples of decoded symbols under suffering CFO are shown below.
 <img src="figs/sample_IQconst_CFO1kHz.png" alt="drawing" width="250"/>
 </p>
 
-A sample of the execution output is shown below, which maps to the sample dataset in [2] with no other impairment added. The left-most integer denotes the slot index within the execution. For each slot, the code prints the following information- The first value is the RN16 value that was decoded in the second stage of the inventory round. The second value is the channel estimation (gain and phase). Then, a short and a complete EPC decoded is shown for that particular slot. Note that the decoder only accepts those EPC's who has passed the CRC check. Lastly, a BER measurement is included. This last feature is only relevant when only one tag is in range and its EPC is known a priori.
+A fragment of the execution output is shown below, which maps to the sample dataset in [2] with no other impairment added. The left-most integer denotes the slot index within the execution. For each slot, the code prints the following information- The first value is the RN16 value that was decoded in the second stage of the inventory round. The second value is the channel estimation (gain and phase). Then, a short and a complete EPC decoded is shown for that particular slot. Note that the decoder only accepts those EPC's who has passed the CRC check. Lastly, a BER measurement is included. This last feature is only relevant when only one tag is in range and its EPC is known a priori.
 
 ```Source
  SLOT  ||                  MESSAGE 
