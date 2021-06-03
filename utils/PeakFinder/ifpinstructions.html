@@ -1,0 +1,374 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <title>ipf instructions</title>
+    <meta content="free freeware download signal processing matlab peak
+      finder finding" name="description">
+    <meta content="Tom O'Haver (toh@umd.edu)" name="author">
+  </head>
+  <body>
+    <center> <a href="index.html"><img src="tb.gif" title="Go to the
+          tutorial essay" alt="" style="border: 0px solid;" width="116"
+          hspace="3" height="42"></a><a
+        href="SignalProcessingTools.html"><img style="border: 0px
+          solid;" src="bh.gif" alt="index" width="111" height="41"></a>
+      <a href="SignalProcessingTools.html"><img style="border: 0px
+          solid;" src="bb.gif" alt="previous" width="111" height="42"></a>
+      <a href="iSignal.html"><img style="border: 0px solid;"
+          src="bf.gif" alt="next" width="103" height="40"></a> </center>
+    <h2><big>Step-by-Step Instructions for using <a
+          href="InteractivePeakFitter.htm#Keypress_operated_version:_ipf.m">ipf</a><br>
+      </big></h2>
+    <big><big>1. Make sure the <a href="ipf.m">latest version of ipf.m</a>
+        is in the Matlab path. Use the Matlab <big><b><tt>load </tt></b></big>or
+
+        <font face="Helvetica, Arial, sans-serif"><b>File &gt; Import
+            data</b></font> command to</big> <big>get your data into
+        the Matlab workspace as<b> </b></big><b><big
+          style="font-weight: normal;">single vector, a pair of vectors
+          (x </big></b><big style="font-weight: normal;">an</big><b><big
+          style="font-weight: normal;">d y), or a matrix with the
+          independent variable (x) in the first column and the dependent
+          variable (y) in the second column</big></b><big> (e.g.
+        "mydata").</big><br>
+      <br>
+    </big><big><big>2. Type</big></big><font size="+1"> <font size="+2"><tt>ipf(y);</tt></font></font><font
+      size="+2"> or <tt>ipf(x,y); </tt>or<tt> ipf(mydata);&nbsp; </tt></font><big><big><br>
+        <br>
+        3. Matlab displays the data in the Figure window, with the
+        entire signal in the lower panel and a zoomed-in section in the
+        top panel. (In the figure below, the data are from the demo
+        script <a href="Demoipf.m">Demoipf.m</a></big></big><big><big>.
+        To use those data, download Demoipf.m, place it in the Matlab
+        path, and type "Demoipf" at the command prompt; the "true"
+        values of the peaks without noise are printed out in the command
+        window for comparison to your results). <i>Note: Make sure you
+          don't click on the “Show Plot Tools” button in the toolbar
+          above the figure; that will disable normal program
+          functioning. If you do; close the Figure window and start
+          again. </i></big></big><big><br>
+      <br>
+      <big>4. Use the <b>left </b>and <b>right </b>cursor keys to <i>
+          pan </i>back and forth across the signal...</big><br>
+      <a href="ipfPan.gif"><img alt="" src="ipfPan.gif" width="556"
+          height="422" border="0"></a><br>
+    </big><big><big><small>To pan faster, use the <b>&lt;</b></small> <small>and
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <b>&gt;</b> keys. To pan by one point, use the <b>[</b> and <b>]</b>
+          keys.</small><br>
+      </big>&nbsp;<br>
+      <big>Use </big></big><big><big>the <b>up </b>and <b>down </b>cursor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        keys to <i>zoom </i>in and out.</big><br>
+      <a href="ipfZoom.gif"><img alt="" src="ipfZoom.gif" width="556"
+          height="422" border="0"></a><br>
+      To zoom faster, use the / and ' keys. <br>
+      <br>
+      <big>5. To fit a peak, isolate and center that peak in the upper
+        window, ....</big><br>
+      <a href="ipfcenter.gif"><img alt="" title="Click to Enlarge."
+          src="ipfcenter.gif" width="556" height="422" border="0"></a><br>
+      <br>
+      <big>6. ... select the number of peaks by pressing a number key
+        between 1 and 9 (<b>1</b> in this case), the peak shape (<b>G</b>
+        = Gaussian in this case), and press <b>F</b> (for <b>F</b>it).
+      </big><br>
+      <a href="ipffit1G.gif"><img alt="" src="ipffit1G.gif" width="556"
+          height="422" border="0"></a><br>
+      The best-fit line is shown in red in the upper panel, superimposed
+      on the data points, along with the peak position, height, and
+      width of the best fit model. The bottom panel displays the
+      residuals (difference between the best-fit line and the data). The
+      current number of peaks, the shape, and the percent fitting error
+      are shown at the bottom of the window. Press the <b>R</b> key to
+      print out the table of results in the command window.<br>
+      <br>
+    </big><big><big><small><big>7. Press the <b>F</b> key again to
+            compute another fit with slightly different starting first
+            guesses. This demonstrates how stable the fit is with
+            respect to variations in starting points (first guesses). </big></small></big></big><font
+      size="+2">Press <b>R</b> to print a report of the best-fit peak
+      parameters in the command window.</font><big><big><small><br>
+        </small></big></big><a href="ipfRefit.gif"><img alt=""
+        src="ipfRefit.gif" width="616" height="426" border="0"></a><br>
+    <big>The percent fitting error are refreshed at the bottom of the
+      window. <br>
+      <br>
+      <big>Twenty different peaks shapes are available by keystroke
+        (e.g.<b> L</b>=Lorentzian, <b>U</b>=exponential pulse, <b>S</b>=sigmoid
+
+
+
+        (logistic function), etc). Press<b> K</b> to see a list of all
+        commands. You can also select the shape by number from an even
+        larger menu of shapes by pressing the <b>-</b> (minus) key. <small><br>
+        </small><br>
+        8. Here's another example using the same signal: to fit the
+        group of three overlapping peaks near x=800, press the <b>3</b>
+        key, use the pan and zoom to isolate that group and try to line
+        up the peaks with the magenta dotted vertical line markers, then
+        press <b>F</b>. </big><br>
+      <a href="ipffit3G.gif"><img alt="" src="ipffit3G.gif" width="616"
+          height="426" border="0"></a><br>
+      <big><small>Each time you press F the fit is repeated with
+          slightly different starting first guesses. Keep your eye on
+          the <i>fitting error </i>and stop when the error is low. The
+          <i>green lines</i> in the upper panel show the individual
+          model components; the <i>red line</i> is the sum of those
+          components.&nbsp; </small><br>
+        <br>
+        9. If the fit seems unstable, press the <b>X</b> key to perform
+        10 silent fits and display the one with the lowest fitting
+        error. Press <b>R</b> to print a report of the best-fit peak
+        parameters in the command window.</big><br>
+      <br>
+      <tt>Percent Fitting Error 1.6439%&nbsp;&nbsp; Elapsed time =
+        1.3387 sec.</tt><tt><br>
+      </tt><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Peak#
+          &nbsp;&nbsp; Position&nbsp;&nbsp;&nbsp;&nbsp;
+          Height&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          Width&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Area</tt></b><tt><br>
+      </tt><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 800.15&nbsp;&nbsp;&nbsp;&nbsp;
+        3.0067&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        29.995&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 96.001</tt><tt><br>
+      </tt><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 849.71&nbsp;&nbsp;&nbsp;&nbsp;
+        1.9867&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        39.633&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 83.814</tt><tt><br>
+      </tt><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 899.4&nbsp;&nbsp; &nbsp;&nbsp;
+        1.0122&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        51.476&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 55.462</tt><br>
+      <big><small> <br>
+        </small> 10. If the peaks don't line up under the magenta dotted
+        vertical lines, you can manually specify the first-guess peak
+        positions: press <b>C</b>, then click on your estimates of the
+        peak positions in the upper graph, once for each peak. A fit is
+        automatically performed after the last click. Peaks are numbered
+        in the order clicked. <br>
+        <a href="ipffit3GC.gif"><img alt="" title="Click toi enlarge"
+            src="ipffit3GC.gif" width="616" height="426" border="2"></a><br>
+      </big> <big><br>
+        11. In the figure below, using data from the demo script <a
+          href="Demoipf2.m">Demoipf2.m</a>, the peaks are superimposed
+        on a gradual curving baseline. To correct for the baseline, use
+        the <b>T</b> key to cycle between the four baseline correction
+        ("autozero") modes: <i>None</i>, <i>Linear</i>, <i>Quadratic</i>,
+        and <i>Flat</i>. Pan and zoom each group of peaks so that the
+        signal returns to the local baseline at the edges of the
+        selected region in the upper panel, then press <b>F</b>. In the
+        sequence shown below, a pair of peaks near x=600 is selected and
+        fit, first <i>without </i>baseline subtraction, then with <i>linear</i>,
+        and then <i>quadratic</i>, baseline correction. The latter two
+        modes work best in this case.<br>
+        <a href="ipfBaseline.gif"><img alt="" src="ipfBaseline.gif"
+            width="622" height="426" border="2"></a><br>
+        <small>The current baseline correction mode is displayed at the
+          top of the window.&nbsp; </small><br>
+        <br>
+        12. Alternatively, you may use multipoint background correction
+        to subtract a linearly-interpolated baseline for the entire
+        signal: press the <b>Backspace </b>key, type in the desired
+        number of background points (14 in the example below) and press
+        the <b>Enter </b>key, then click where you estimate the
+        baseline to be in the lower panel, starting at the left of the
+        lowest x-value and ending to the right of the highest x-value.
+        (For greatest precision, you can maximize the figure window
+        before this operation). After the last click, the baseline is
+        subtracted; then you can continue with curve fitting. (If you
+        mess up, press the <b>\</b> key to restore the original
+        background and start over). When you are done, you can measure
+        the peaks without baseline subtraction.<br>
+        <a href="ipfManulBaseline.gif"><img alt=""
+            src="ipfManulBaseline.gif" width="622" height="426"
+            border="2"></a><br>
+        <small>The y-axis label of the bottom panel changes accordingly.<br>
+          <br>
+        </small> 13. Some peak shapes have an <i>extra variable
+          parameter</i> that modifies the shape: the Voigt profile,
+        Pearson, exponentially-broadened Gaussian (ExpGaussian),
+        exponentially-broadened Lorentzian (ExpLorentzian), bifurcated
+        Gaussian, bifurcated Lorentzian, or Gaussian/Lorentzian blend.
+        For those shapes, you control that extra variable parameter with
+        the <b>A</b> and <b>Z</b> keys and adjust it to minimize the
+        fitting error. The current value is displayed at the bottom of
+        the window. In this example, the single peak near x=2800 in the
+        file "DataMatrix3" is fit, first with a <i>Gaussian </i>and
+        then with an <i>exponentially broadened Gaussian</i> (<b>E</b>
+        key), adjusting the extra parameter (the <i>time constant</i>)
+        to minimize the fitting error.<br>
+        <tt><br>
+          &gt;&gt; load DataMatrix3<br>
+          &gt;&gt; ipf(DataMatrix3)</tt><tt></tt><tt><br>
+        </tt></big></big><big><big><a href="ipfE.gif"><img alt=""
+            src="ipfE.gif" width="622" height="426" border="2"></a><br>
+        <br>
+        14. Press Q to print out a report in the command window.<br>
+        <tt><small><br>
+            Peak Shape = Exponentially-broadened Gaussian<br>
+            No baseline correction<br>
+            Number of peaks = 2<br>
+            Time Constant = 33.1919<br>
+            Fitted x range = 1663.5 - 2050.5 (dx=387)&nbsp;
+            (Center=1857)&nbsp; <br>
+            Percent Fitting Error = 0.090216% <br>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Peak#&nbsp;&nbsp;
+              Position&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              Height&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              Width&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Area</b><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            1800.4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            1.8632&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            60.057&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 119.11<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1900.6&nbsp;&nbsp;
+            &nbsp; &nbsp; 0.48346&nbsp;&nbsp;&nbsp;&nbsp;
+            59.62&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; 30.67</small></tt><br>
+        <br>
+        15. To test the stability of your fit with respect to random
+        noise, press the<b> N</b> key a few times. That will perform
+        fits on subsets of data points (called "bootstrap samples"). <br>
+        <a href="ipfNkey.gif"><img alt="" src="ipfNkey.gif" width="622"
+            height="426" border="2"></a><br>
+        If the <b>N</b> key gives reasonable-looking fits with peak
+        parameters that vary from trial to trial, then you can determine
+        the variability of the peak position, height, width, and area by
+        pressing the <b>V</b> key, which will calculate the standard
+        deviation of all the peak parameters of all the peaks in 100
+        such bootstrap sub-samples (this may take a minute or so). You
+        will be asked for the number of trials per bootstrap sample;
+        start with <b>1</b> and increase it if the fit is not stable:<br>
+        <tt><small><br>
+            Number of fit trials per bootstrap sample (0 to cancel): 1</small></tt><br>
+        &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small><tt> <b>Peak
+
+
+
+
+              #1 &nbsp;&nbsp;&nbsp;&nbsp;
+              Position&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              Height&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              Width&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Area</b></tt><tt><br>
+          </tt><tt>Bootstrap Mean:
+            &nbsp; &nbsp; 1200.004&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            1.9967714&nbsp;&nbsp; 100.31494&nbsp;&nbsp;&nbsp; 213.20131</tt><tt><br>
+          </tt><tt>Bootstrap STD: &nbsp; &nbsp;&nbsp;
+            0.1832&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            0.0059565&nbsp;&nbsp;&nbsp;&nbsp; 0.37247&nbsp;&nbsp;&nbsp;
+            0.7652</tt><tt><br>
+          </tt></small></big></big><big><big><small><tt><span
+              style="font-family: monospace;"><span style="font-family:
+                monospace;">STD based on IQR</span></span>: &nbsp;
+            0.27681&nbsp; &nbsp; &nbsp;&nbsp;
+            0.0075577&nbsp;&nbsp;&nbsp;&nbsp; 0.53384&nbsp;&nbsp;&nbsp;
+            1.1063</tt><tt><br>
+          </tt><tt>Percent RSD:&nbsp; &nbsp; &nbsp; &nbsp;
+            0.015266&nbsp;&nbsp;&nbsp; &nbsp;
+            0.29831&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+            0.3713&nbsp;&nbsp;&nbsp;&nbsp; 0.35891</tt><tt><br>
+          </tt></small></big></big><big><big><small><tt><span
+              style="font-family: monospace;"><span style="font-family:
+                monospace;">%STD based on IQR</span></span>:&nbsp;
+            0.015067&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            0.2985&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            0.37216&nbsp;&nbsp;&nbsp; 0.35992</tt><tt><br>
+          </tt><tt>Elapsed time is 3.060255 seconds.</tt><tt><br>
+          </tt><tt> </tt></small></big></big><font size="+1">..and so
+      on for Peak #2 and the other peaks if a multi-peak fit.</font><br>
+    <br>
+    <big><big>On the other hand, if the <b>N</b> key gives <i>wildly
+          different fits</i>, with highly variable fitting errors and
+        peak parameters, then the fit is <i>not </i>stable, and you
+        should try to increase the number of trials when asked (but of
+        course that will increase the time it takes to complete). If
+        that does not help, use another model or a better data set. <br>
+        <br>
+      </big></big><big><big>16. </big></big><big><big>Press <b>K</b>
+        to display the complete set of keystroke commands. <a
+          href="InteractivePeakFitter.htm#ipf_instructions">Click here</a>
+        for more details.<tt><font size="+1"><b> </b></font></tt></big></big><b><font
+        size="+1"><span style="font-weight: normal;"><tt><br>
+            <br>
+          </tt></span></font></b>
+    <hr style="width: 100%; height: 2px;">
+    <p> This page is part of "<a
+        href="https://terpconnect.umd.edu/%7Etoh/spectrum/"><b>A
+          Pragmatic Introduction to Signal Processing</b></a>", created
+      and maintained by <a href="http://www.wam.umd.edu/%7Etoh/">Prof.
+        Tom O'Haver </a>, Department of Chemistry and Biochemistry, The
+      University of Maryland at College Park. Comments, suggestions and
+      questions should be directed to Prof. O'Haver at <a
+        href="mailto:toh@umd.edu?subject=ipf%20instructions">toh@umd.edu</a>.
+      <a href="http://terpconnect.umd.edu/%7Etoh/"></a> </p>
+    <p>Last updated, May, 2017</p>
+    <p>Website created with <a
+        href="http://www.seamonkey-project.org/releases/seamonkey2.17.1/">SeaMonkey</a>.
+    </p>
+    <hr>
+    <center>
+      <center> <a href="index.html"><img src="tb.gif" title="Go to the
+            tutorial essay" alt="" style="border: 0px solid;"
+            width="113" hspace="3" height="44"></a><a
+          href="SignalProcessingTools.html"><img style="border: 0px
+            solid;" src="bh.gif" alt="index" width="129" height="48"></a>
+        <a href="SignalProcessingTools.html"><img style="border: 0px
+            solid;" src="bb.gif" alt="previous" width="120" height="46"></a>
+        <a href="iSignal.html"><img style="border: 0px solid;"
+            src="bf.gif" alt="next" width="126" height="49"></a> </center>
+    </center>
+    <p> Number of unique visits since May 17, 2008:
+      <!-- Start of StatCounter Code -->
+      <script type="text/javascript">
+sc_project=3716888; 
+sc_invisible=0; 
+sc_partition=44; 
+sc_security="b9644933"; 
+sc_text=2; 
+</script>
+      <script type="text/javascript" src="http://www.statcounter.com/counter/counter_xhtml.js"></script><noscript></noscript></p>
+    <div class="statcounter"><a
+        href="http://www.statcounter.com/free_hit_counter.html"
+        target="_blank"><img class="statcounter"
+          src="http://c45.statcounter.com/3716888/0/b9644933/0/"
+          alt="counter create hit"></a></div>
+    <!-- End of StatCounter Code -->
+    <p></p>
+    <script id="aptureScript" type="text/javascript" src="http://www.apture.com/js/apture.js?siteToken=rWapN1U" charset="utf-8"></script>
+  </body>
+</html>

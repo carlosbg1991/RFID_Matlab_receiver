@@ -1,0 +1,1 @@
+function g = lognormal(x,pos,wid)% lognormal function.  pos=position; wid=half-width (both scalar)% lognormal(x,pos,wid), where x may be scalar, vector, or matrix% pos=position; wid=half-width (both scalar)% T. C. O'Haver, 1991  g = exp(-(log(x/pos)/(0.01.*wid)) .^2);

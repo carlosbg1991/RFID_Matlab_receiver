@@ -1,0 +1,1 @@
+disp('Smooth:');x=1:10000; y=randn(size(x)); tic;smoothedy=fastsmooth(y,500,3,0);toc;disp('Plot:');tic;plot(x,y,x,smoothedy);toc
